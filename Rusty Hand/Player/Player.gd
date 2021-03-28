@@ -1,5 +1,7 @@
 extends KinematicBody2D
 
+onready var Explosion = load("res://Entities/Explosion.tscn")
+
 onready var SM = $StateMachine
 onready var tilemap = get_node("/root/Game/TileMap")
 
@@ -19,7 +21,6 @@ var coyote_time = 0.0
 func _ready():
 	pass # Replace with function body.
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	$State.text = SM.state_name
@@ -29,6 +30,8 @@ func _process(delta):
 		$RobotGirl.play("Falling_Start")
 
 func _physics_process(delta):
+	if SM.state_name == "Dead":
+		return
 	if Input.is_action_just_released("up"):
 		jump_released = true
 	velocity += acceleration * delta
@@ -44,22 +47,42 @@ func _physics_process(delta):
 	for i in get_slide_count():
 		var collision = get_slide_collision(i)
 		if collision.collider == tilemap:
-			$Cursor2.global_position = collision.position
-			$Cursor2.visible = true
-			$Cursor3.global_position = position - collision.normal * 60
-			$Cursor3.visible = true
-			#$Cursor4.global_position = collision.position - collision.collider.position
-			#$Cursor4.visible = true
-			
-			var grid_position = tilemap.world_to_map(collision.position - collision.collider.position)
-			grid_position += Vector2(-0.001, 0.001)
-			# project it a teensy bit away from the player to make sure its in the tile
-			grid_position /= tilemap.scale.x
-			#grid_position += (grid_position - position) * 0.02
-			print(grid_position)
-			$Cursor.global_position = tilemap.map_to_world(grid_position) * tilemap.scale.x + tilemap.position
-			$Cursor.visible = true
-			print(tilemap.get_cellv(grid_position))
+			# I test each collision at 4 different points just in case if it's on a bad edge or corner
+			for x in [-1, 1]:
+				for y in [-1, 1]:
+					var tile = get_tile_at_pos(collision.position + Vector2(x * 0.1, y * 0.1))
+					#if tile == 2:
+					#	die()
+	var tile = get_tile_at_pos(position)
+	match tile:
+		2: # spikes
+			die()
+		4: # uppinators
+			velocity.y += -1650.0
+			SM.set_state("Falling")
+			set_animation("Falling")
+		6: # oil
+			set_tile_at_pos(position, TileMap.INVALID_CELL)
+	
+func get_tile_at_pos(pos):
+	var input_position = pos - tilemap.position
+	input_position /= tilemap.scale.x
+	var grid_position = tilemap.world_to_map(input_position)
+	var tile = tilemap.get_cellv(grid_position)
+	return tile
+	
+func set_tile_at_pos(pos, tile):
+	var input_position = pos - tilemap.position
+	input_position /= tilemap.scale.x
+	var grid_position = tilemap.world_to_map(input_position)
+	tilemap.set_cellv(grid_position, tile)
+
+func die():
+	var explosion = Explosion.instance()
+	explosion.position = position
+	get_parent().add_child(explosion)
+	SM.set_state("Dead")
+	print("Ouch! I should be dead right now.")
 	
 func set_animation(anim):
 	if $RobotGirl.animation != anim:

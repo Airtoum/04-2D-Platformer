@@ -14,12 +14,13 @@ func physics_process(_delta):
 	if myEnt.velocity.y < -350:
 		myEnt.velocity.y = -350
 	if myEnt.is_on_floor():
-		myEnt.velocity.y = 0
+		if myEnt.velocity.y >= 0:
+			myEnt.velocity.y = 0
 		if abs(myEnt.velocity.x) <= 10:
 			SM.set_state("Idle")
 		else:
 			SM.set_state("Moving")
-	if myEnt.is_on_ceiling():
+	if myEnt.is_on_ceiling() and myEnt.velocity.y <= 0:
 		myEnt.velocity.y = 0
 	#air movement, no automatic decelleration 
 	if Input.is_action_pressed("left"):

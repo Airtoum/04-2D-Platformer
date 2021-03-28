@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://StateMachine/StateMachine.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
@@ -8,70 +8,71 @@
 [ext_resource path="res://Player/Falling.gd" type="Script" id=6]
 [ext_resource path="res://Player/Jumping.gd" type="Script" id=7]
 [ext_resource path="res://Player/Robot Girl.png" type="Texture" id=8]
+[ext_resource path="res://Player/Dead.gd" type="Script" id=9]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 8 )
-region = Rect2( 0, 0, 21, 27 )
+region = Rect2( 0, 54, 21, 27 )
 
 [sub_resource type="AtlasTexture" id=2]
 atlas = ExtResource( 8 )
-region = Rect2( 21, 0, 21, 27 )
-
-[sub_resource type="AtlasTexture" id=9]
-atlas = ExtResource( 8 )
-region = Rect2( 0, 54, 21, 27 )
-
-[sub_resource type="AtlasTexture" id=10]
-atlas = ExtResource( 8 )
 region = Rect2( 21, 54, 21, 27 )
-
-[sub_resource type="AtlasTexture" id=11]
-atlas = ExtResource( 8 )
-region = Rect2( 63, 27, 21, 27 )
 
 [sub_resource type="AtlasTexture" id=3]
 atlas = ExtResource( 8 )
-region = Rect2( 42, 27, 21, 27 )
+region = Rect2( 63, 27, 21, 27 )
 
 [sub_resource type="AtlasTexture" id=4]
 atlas = ExtResource( 8 )
-region = Rect2( 42, 0, 21, 27 )
+region = Rect2( 42, 27, 21, 27 )
 
 [sub_resource type="AtlasTexture" id=5]
 atlas = ExtResource( 8 )
-region = Rect2( 63, 0, 21, 27 )
+region = Rect2( 0, 0, 21, 27 )
 
 [sub_resource type="AtlasTexture" id=6]
 atlas = ExtResource( 8 )
-region = Rect2( 0, 27, 21, 27 )
+region = Rect2( 21, 0, 21, 27 )
 
 [sub_resource type="AtlasTexture" id=7]
 atlas = ExtResource( 8 )
+region = Rect2( 42, 0, 21, 27 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 8 )
+region = Rect2( 63, 0, 21, 27 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 8 )
+region = Rect2( 0, 27, 21, 27 )
+
+[sub_resource type="AtlasTexture" id=10]
+atlas = ExtResource( 8 )
 region = Rect2( 21, 27, 21, 27 )
 
-[sub_resource type="SpriteFrames" id=8]
+[sub_resource type="SpriteFrames" id=11]
 animations = [ {
 "frames": [ SubResource( 1 ), SubResource( 2 ) ],
-"loop": true,
-"name": "Idle",
-"speed": 3.0
-}, {
-"frames": [ SubResource( 9 ), SubResource( 10 ) ],
 "loop": true,
 "name": "Falling",
 "speed": 12.0
 }, {
-"frames": [ SubResource( 11 ) ],
+"frames": [ SubResource( 3 ) ],
 "loop": true,
 "name": "Falling_Start",
 "speed": 6.0
 }, {
-"frames": [ SubResource( 3 ) ],
+"frames": [ SubResource( 4 ) ],
 "loop": true,
 "name": "Jumping",
 "speed": 6.0
 }, {
-"frames": [ SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ) ],
+"frames": [ SubResource( 5 ), SubResource( 6 ) ],
+"loop": true,
+"name": "Idle",
+"speed": 3.0
+}, {
+"frames": [ SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ) ],
 "loop": true,
 "name": "Running",
 "speed": 12.0
@@ -85,8 +86,9 @@ polygon = PoolVector2Array( -20, 42, 20, 42, 20, -20, 10, -40, -10, -40, -20, -2
 
 [node name="RobotGirl" type="AnimatedSprite" parent="."]
 scale = Vector2( 3, 3 )
-frames = SubResource( 8 )
+frames = SubResource( 11 )
 animation = "Idle"
+frame = 1
 playing = true
 offset = Vector2( -1, 0 )
 
@@ -105,6 +107,9 @@ script = ExtResource( 6 )
 [node name="Jumping" type="Node" parent="StateMachine"]
 script = ExtResource( 7 )
 
+[node name="Dead" type="Node" parent="StateMachine"]
+script = ExtResource( 9 )
+
 [node name="State" type="Label" parent="."]
 margin_left = -20.69
 margin_top = -58.7329
@@ -120,8 +125,7 @@ scale = Vector2( 0.4, 0.4 )
 texture = ExtResource( 2 )
 
 [node name="Cursor2" type="Sprite" parent="."]
-modulate = Color( 1, 0, 0, 1 )
-scale = Vector2( 0.4, 0.4 )
+modulate = Color( 1, 0, 0, 0.313726 )
 texture = ExtResource( 2 )
 
 [node name="Cursor3" type="Sprite" parent="."]
@@ -130,7 +134,6 @@ scale = Vector2( 0.4, 0.4 )
 texture = ExtResource( 2 )
 
 [node name="Cursor4" type="Sprite" parent="."]
-modulate = Color( 0, 0.952941, 1, 1 )
-scale = Vector2( 0.4, 0.4 )
+modulate = Color( 0, 0.952941, 1, 0.313726 )
 texture = ExtResource( 2 )
 [connection signal="animation_finished" from="RobotGirl" to="." method="_on_RobotGirl_animation_finished"]
