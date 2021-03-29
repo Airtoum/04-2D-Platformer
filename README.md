@@ -17,7 +17,7 @@ All the sprites were made by me using Piskel.
 The font "5x5 pixel variant" was also made by me a few years ago with Fontstruct.
 
 ## References
-Kind of inspired by a really old flash game "Wubzy's Amazing Adventure"
+Level design and aesthetic were kind of inspired by a really old flash game "Wubzy's Amazing Adventure"
 
 Sprites made with Piskelapp
 
