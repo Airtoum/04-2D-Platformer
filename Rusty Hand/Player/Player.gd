@@ -1,6 +1,7 @@
 extends KinematicBody2D
 
 onready var Explosion = load("res://Entities/Explosion.tscn")
+onready var Global = get_node("/root/Global")
 
 onready var SM = $StateMachine
 onready var tilemap = get_node("/root/Game/TileMap")
@@ -16,6 +17,8 @@ var jump_released = true
 var flipH = false
 var default_coyote_time = 4.0 / 60.0 # seconds
 var coyote_time = 0.0
+var dead_timer = 0.0
+var respawn_time = 2.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -31,6 +34,11 @@ func _process(delta):
 
 func _physics_process(delta):
 	if SM.state_name == "Dead":
+		$CollisionPolygon2D.disabled = true
+		dead_timer += delta
+		if dead_timer > respawn_time:
+			Global.revert_score()
+			get_tree().reload_current_scene()
 		return
 	if Input.is_action_just_released("up"):
 		jump_released = true
@@ -51,18 +59,29 @@ func _physics_process(delta):
 			for x in [-1, 1]:
 				for y in [-1, 1]:
 					var tile = get_tile_at_pos(collision.position + Vector2(x * 0.1, y * 0.1))
-					#if tile == 2:
-					#	die()
+					if tile == 14 or tile == 15: # steven tile
+						die()
 	var tile = get_tile_at_pos(position)
 	match tile:
 		2: # spikes
 			die()
 		4: # uppinators
-			velocity.y += -1650.0
-			SM.set_state("Falling")
+			velocity.y += -Global.antigrav_tile_strength * delta
+			if SM.state_name != "Falling":
+				SM.set_state("Falling")
 			set_animation("Falling")
 		6: # oil
 			set_tile_at_pos(position, TileMap.INVALID_CELL)
+			Global.score += 1
+		13: # oil on bg
+			set_tile_at_pos(position, 12) # set to bg
+			Global.score += 1
+		16: # door, top
+			Global.load_next_level()
+			return
+		17: # door, bottom
+			Global.load_next_level()
+			return
 	
 func get_tile_at_pos(pos):
 	var input_position = pos - tilemap.position

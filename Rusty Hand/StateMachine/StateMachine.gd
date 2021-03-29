@@ -4,10 +4,14 @@ onready var state = null
 onready var previous_state = null
 onready var state_name = ""
 
+var enabled = true
+
 func _ready():
 	set_state(get_children()[0].name)
 
 func _physics_process(delta):
+	if not enabled:
+		return
 	if state and state.has_method("physics_process"):
 		state.physics_process(delta)
 

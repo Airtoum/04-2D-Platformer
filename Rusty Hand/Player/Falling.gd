@@ -8,11 +8,11 @@ func weightedSum(a1, w1, a2, w2):
 func start():
 	myEnt.acceleration.y = myEnt.normal_gravity
 	myEnt.jump_released = true
+	if myEnt.velocity.y < -350:
+		myEnt.velocity.y = -350
 	#myEnt.set_animation("Falling_Start")
 
 func physics_process(_delta):
-	if myEnt.velocity.y < -350:
-		myEnt.velocity.y = -350
 	if myEnt.is_on_floor():
 		if myEnt.velocity.y >= 0:
 			myEnt.velocity.y = 0
